@@ -1,0 +1,133 @@
+---
+title: "HW2_Stats"
+output:
+  pdf_document: default
+  html_document: default
+date: "2023-10-22"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Question 2
+Part A
+```{r}
+library(DataAnalytics)
+data(mvehicles)
+cars = mvehicles[mvehicles$bodytype != "Truck", ]
+sub_car <- cars[cars$luxury >= 0.2 & cars$luxury <=0.3, ]
+hist(sub_car$emv, breaks = 20, main = "Conditional Distribution of emv", xlab = "emv", col = "lightblue", border = "black")
+
+```
+
+Part B
+```{r, results='markup'}
+conditional_mean <- mean(sub_car$emv)
+low_quantile <- quantile(sub_car$emv, probs = 0.025)
+up_quantile <- quantile(sub_car$emv, probs = 0.975)
+conditional_mean
+low_quantile
+up_quantile
+```
+The interval is [14699.09, 38632.34] with respect to the given percentile. 
+
+Part C
+```{r, results='markup'}
+more_lux <- cars[cars$luxury >= 0.7 & cars$luxury <=0.8, ]
+hist(more_lux$emv, breaks = 20, main = "Conditional Distribution of emv for Higher Lux Index", xlab = "emv", col = "lightgreen", border = "black")
+cond_mean <- mean(more_lux$emv)
+quantile_range <- quantile(more_lux$emv, c(0.025, 0.975))
+cond_mean
+quantile_range
+```
+The interval is [34254.33, 179179.2] for the given percentile. 
+
+Difference: the conditional distribution of emv for lower luxury index is closer to a normal distribution, while the conditional distribution of emv for higher luxury index is more skewed to the right with a very thin tail. Also, the one for higher luxury index also appears to have more outliers, which may due to cars that are much more expensive than the others. 
+
+(d). Since both the results turn out to be skewed, there may exist substantial variability within the data. This can make it difficult for us to accurately predict 'emv' based solely on 'luxury'. Also, the outstanding proportion of outliers in part c also indicates that luxury index may not capture the full range of factors that determine 'emv' especially in the case of a higher luxury index. Hence, if we are only using luxury index in attempt to determine the price, our model will likely to have limited predictive power. Moreover, based on the histograms, the range of emv is very broad for a specific range of luxury index, making the mean of emv not quite indicative of predicting emv in our case.
+
+## Part 3
+Part A
+```{r, results='markup'}
+data(detergent)
+deter_model <- lm(log(q_tide128) ~ log(p_tide128), data = detergent)
+confint(deter_model, level = 0.90)
+```
+
+Part B
+For the retailer to earn a 25 percent gross margin, the inverse elasticity is -(1/0.25), which is -4. Since -4 is not in the 90% interval computed above, the retailer is not pricing optimally. 
+
+## Part 4
+Part A
+```{r}
+my_function <- function(b0, b1, X, sigma) {
+  random_error <- rnorm(length(X), mean = 0, sd = sigma)
+  y <- b0 + b1 * X + random_error
+  
+  return(y)
+}
+```
+
+Part B
+```{r}
+data(marketRf)
+b0 <- 1
+b1 <- 20
+sigma <- 1
+y <- my_function(b0, b1, marketRf$vwretd, sigma)
+plot(marketRf$vwretd, y, main = "Scatterplot of X vs Simulated Y", xlab = "vwretd", ylab = "Simulated Y")
+abline(lm(y ~ marketRf$vwretd), col = "red")
+abline(1, 20, col = "green")
+# The fitted line is the red line, and the conditional mean line is the green line. 
+```
+Question 5
+
+a. 
+```{r}
+b_0 <- 2
+b_1 <- 0.6
+sigma_new <- sqrt(2)
+N <- 300
+sample_num <- 10000
+samples_b1 <- double(sample_num)
+X_new <- rnorm(300)
+
+for (i in 1: sample_num){
+  y_new <- my_function(b_0, b_1, X_new, sigma_new)
+  samples_b1[i] <- lm(y_new ~ X_new)$coef[2]
+}
+
+hist(samples_b1, main = "Sampling Distribution of b1", xlab = "b1", col = "lightgreen", breaks = 20)
+
+```
+b. 
+```{r, results='markup'}
+empirical_value <- mean(samples_b1)
+empirical_value
+theoretical_value <- b_1
+theoretical_value
+
+```
+c.
+```{r}
+denominator = 0
+for (i in 1: 10000){
+  denominator = denominator + (samples_b1[i] - empirical_value)^2
+}
+var_b1 <- 2/denominator
+var_b1
+```
+
+Question 6
+
+a. Standard error quantifies the extent of variability that we should expect the sample statistic to differ across random samples taken from the population. Standard deviation, on the other hand, is a measure of the spread of data points within a single data set, and it quantifies how the points in this data set deviate from the mean. Hence, standard deviation is associated with a single data set, while the standard error measures variability across multiple samples. 
+
+b. Sampling error is the difference between the sample statistic and the population statistic. It happens when we try to make inferences about the population based on the sample we draw from the population. The standard error captures the sampling error by quantifying the expected variation that sample statistics may have across different random samples, and the it also indicates the impact of sampling error with respect to the accuracy of estimates. 
+c. Since Steven has parameter estimates and standard error, we can give him some general advice on how he can use standard error to measure the uncertainty associated with the parameter estimates. Smaller standard errors often indicate better precision in the parameter estimates since there is less uncertainty involved, while larger standard errors may suggest that there are greater uncertainty in the parameter estimates. 
+
+d. Since Xingua has both test statistic and p-value, we can help her use and interpret the output in the following way. Firstly, we can take a look at the test statistic, as it indicates whether there is strong evidence against the null hypothesis in favor of the alternative hypothesis. It is often the case that with large test statistic, we would have strong evidence against the null hypothesis. Xingua can also use the p-value to test her null hypothesis with the predetermined significance level alpha. If p-value <= alpha, she should reject he null hypothesis, and if p-value > alpha, she should not reject the null hypothesis when making the decision. 
+
+
+
+
