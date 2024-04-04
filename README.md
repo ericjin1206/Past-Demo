@@ -1,0 +1,1 @@
+This repository offers a comprehensive overview of my previous projects, showcasing my proficiency in Machine Learning, database management, optimization, as well as data structures and algorithms. Additionally, it highlights my capabilities in utilizing Python, SQL, and R, demonstrating a broad spectrum of my technical skills.
