@@ -9,3 +9,4 @@
 - **Machine_Learning**: Machine learning demos in Python.
 - **Regression_Analysis**: Python and R files for regression analysis.
 - **SQL**: SQL demonstrations for dimensional modeling.
+- **RAG**: a multimodal 10-K analysis system with a RAG pipeline for efficient querying
